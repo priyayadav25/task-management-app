@@ -66,27 +66,29 @@ window.onload = function () {
 
 // Add Task
 
-function addTask() {
+async function addTask() {
 
-    let taskInput = document.getElementById("taskInput");
+    let task = document.getElementById("taskInput").value;
 
-    let task = taskInput.value.trim();
-
-    if (task === "") {
-        alert("Please enter a task");
+    if(task === ""){
+        alert("Enter Task");
         return;
     }
 
-    tasks.push({
-        title: task,
-        completed: false
+    await fetch("http://localhost:5000/tasks",{
+        method:"POST",
+        headers:{
+            "Content-Type":"application/json"
+        },
+        body:JSON.stringify({
+            title:task,
+            completed:false
+        })
     });
 
-    localStorage.setItem("tasks", JSON.stringify(tasks));
+    alert("Task Added");
 
-    taskInput.value = "";
-
-    displayTasks();
+    document.getElementById("taskInput").value="";
 }
 
 // Display Tasks
