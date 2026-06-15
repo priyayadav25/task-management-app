@@ -1,181 +1,83 @@
-// ---------------- REGISTER ----------------
+// REGISTER
 
-function registerUser() {
+function registerUser(){
 
-    let name = document.getElementById("name").value;
-    let email = document.getElementById("email").value;
-    let password = document.getElementById("password").value;
+let name=document.getElementById("name").value;
+let email=document.getElementById("email").value;
+let password=document.getElementById("password").value;
 
-    if (!name || !email || !password) {
-        alert("Please fill all fields");
-        return;
-    }
+localStorage.setItem(
+"user",
+JSON.stringify({
+name,
+email,
+password
+})
+);
 
-    let user = {
-        name,
-        email,
-        password
-    };
+alert("Registered Successfully");
 
-    localStorage.setItem("user", JSON.stringify(user));
-
-    alert("Registration Successful");
-
-    window.location.href = "login.html";
+window.location.href="login.html";
 }
 
-// ---------------- LOGIN ----------------
+// LOGIN
 
-function loginUser() {
+function loginUser(){
 
-    let email = document.getElementById("loginEmail").value;
-    let password = document.getElementById("loginPassword").value;
+let email=document.getElementById("loginEmail").value;
+let password=document.getElementById("loginPassword").value;
 
-    let user = JSON.parse(localStorage.getItem("user"));
+let user=
+JSON.parse(localStorage.getItem("user"));
 
-    if (
-        user &&
-        user.email === email &&
-        user.password === password
-    ) {
-
-        localStorage.setItem("loggedIn", "true");
-
-        alert("Login Successful");
-
-        window.location.href = "dashboard.html";
-
-    } else {
-
-        alert("Invalid Email or Password");
-
-    }
+if(
+user &&
+user.email===email &&
+user.password===password
+){
+alert("Login Successful");
+window.location.href="dashboard.html";
+}
+else{
+alert("Invalid Credentials");
+}
 }
 
-// ---------------- TASKS ----------------
+// ADD TASK
 
-let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+async function addTask(){
 
-window.onload = function () {
+let task=
+document.getElementById("taskInput").value;
 
-    if (document.getElementById("taskList")) {
-        displayTasks();
-    }
-
-};
-
-// Add Task
-
-async function addTask() {
-
-    let task = document.getElementById("taskInput").value;
-
-    if(task === ""){
-        alert("Enter Task");
-        return;
-    }
-
-    await fetch("http://localhost:5000/tasks",{
-        method:"POST",
-        headers:{
-            "Content-Type":"application/json"
-        },
-        body:JSON.stringify({
-            title:task,
-            completed:false
-        })
-    });
-
-    alert("Task Added");
-
-    document.getElementById("taskInput").value="";
+if(task===""){
+alert("Enter Task");
+return;
 }
 
-// Display Tasks
+await fetch(
+"http://localhost:5000/tasks",
+{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+title:task,
+completed:false
+})
+}
+);
 
-function displayTasks() {
+alert("Task Added");
 
-    let taskList = document.getElementById("taskList");
-
-    taskList.innerHTML = "";
-
-    tasks.forEach((task, index) => {
-
-        let li = document.createElement("li");
-
-        li.innerHTML = `
-            ${task.completed ? "✅" : "❌"} ${task.title}
-
-            <button onclick="completeTask(${index})">
-                Complete
-            </button>
-
-            <button onclick="editTask(${index})">
-                Edit
-            </button>
-
-            <button onclick="deleteTask(${index})">
-                Delete
-            </button>
-        `;
-
-        taskList.appendChild(li);
-
-    });
+document.getElementById("taskInput").value="";
 }
 
-// Complete Task
+// LOGOUT
 
-function completeTask(index) {
+function logout(){
 
-    tasks[index].completed = true;
+window.location.href="login.html";
 
-    localStorage.setItem("tasks", JSON.stringify(tasks));
-
-    displayTasks();
-}
-
-// Edit Task
-
-function editTask(index) {
-
-    let updatedTask = prompt(
-        "Edit Task",
-        tasks[index].title
-    );
-
-    if (updatedTask !== null && updatedTask !== "") {
-
-        tasks[index].title = updatedTask;
-
-        localStorage.setItem(
-            "tasks",
-            JSON.stringify(tasks)
-        );
-
-        displayTasks();
-    }
-}
-
-// Delete Task
-
-function deleteTask(index) {
-
-    tasks.splice(index, 1);
-
-    localStorage.setItem(
-        "tasks",
-        JSON.stringify(tasks)
-    );
-
-    displayTasks();
-}
-
-// Logout
-
-function logout() {
-
-    localStorage.removeItem("loggedIn");
-
-    window.location.href = "login.html";
 }
