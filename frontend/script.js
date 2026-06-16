@@ -1,28 +1,36 @@
 const API_URL = "http://localhost:5000/tasks";
 
-async function displayTasks(tasks) {
-    const taskList = document.getElementById("taskList");
-    taskList.innerHTML = "";
+async function loadTasks() {
+    try {
+        const response = await fetch(API_URL);
+        const tasks = await response.json();
 
-    tasks.forEach((task, index) => {
-        const li = document.createElement("li");
+        const taskList = document.getElementById("taskList");
+        taskList.innerHTML = "";
 
-        li.innerHTML = `
-            <span class="${task.completed ? 'completed' : ''}">
-                ${task.title}
-            </span>
+        tasks.forEach((task, index) => {
+            const li = document.createElement("li");
 
-            <button onclick="markDone(${index})">
-                ${task.completed ? 'Undo' : 'Done'}
-            </button>
+            li.innerHTML = `
+                <span class="${task.completed ? 'completed' : ''}">
+                    ${task.title}
+                </span>
 
-            <button onclick="deleteTask(${index})">
-                Delete
-            </button>
-        `;
+                <button onclick="markDone(${index})">
+                    ${task.completed ? 'Undo' : 'Done'}
+                </button>
 
-        taskList.appendChild(li);
-    });
+                <button onclick="deleteTask(${index})">
+                    Delete
+                </button>
+            `;
+
+            taskList.appendChild(li);
+        });
+
+    } catch (error) {
+        console.error("Error loading tasks:", error);
+    }
 }
 
 async function addTask() {
@@ -33,27 +41,29 @@ async function addTask() {
         return;
     }
 
+    const newTask = {
+        title: taskInput.value,
+        completed: false
+    };
+
     await fetch(API_URL, {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
         },
-        body: JSON.stringify({
-            title: taskInput.value,
-            completed: false
-        })
+        body: JSON.stringify(newTask)
     });
 
     taskInput.value = "";
-
-    displayTasks();
+    loadTasks();
 }
 
-async function completeTask(index) {
+async function markDone(index) {
+
     const response = await fetch(API_URL);
     const tasks = await response.json();
 
-    tasks[index].completed = true;
+    tasks[index].completed = !tasks[index].completed;
 
     await fetch(`${API_URL}/${index}`, {
         method: "PUT",
@@ -63,20 +73,21 @@ async function completeTask(index) {
         body: JSON.stringify(tasks[index])
     });
 
-    displayTasks();
+    loadTasks();
 }
 
 async function deleteTask(index) {
+
     await fetch(`${API_URL}/${index}`, {
         method: "DELETE"
     });
 
-    displayTasks();
+    loadTasks();
 }
 
 function logout() {
-    alert("Logged Out");
+    alert("Logged Out Successfully");
     window.location.href = "login.html";
 }
 
-displayTasks();
+loadTasks();
