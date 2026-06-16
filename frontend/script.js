@@ -1,9 +1,6 @@
 const API_URL = "http://localhost:5000/tasks";
 
-async function displayTasks() {
-    const response = await fetch(API_URL);
-    const tasks = await response.json();
-
+async function displayTasks(tasks) {
     const taskList = document.getElementById("taskList");
     taskList.innerHTML = "";
 
@@ -15,8 +12,8 @@ async function displayTasks() {
                 ${task.title}
             </span>
 
-            <button onclick="completeTask(${index})">
-                Done
+            <button onclick="markDone(${index})">
+                ${task.completed ? 'Undo' : 'Done'}
             </button>
 
             <button onclick="deleteTask(${index})">
