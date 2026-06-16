@@ -9,14 +9,10 @@ app.use(express.json());
 
 const DATA_FILE = "./data.json";
 
-/* Load Tasks */
-
 function getTasks() {
     const data = fs.readFileSync(DATA_FILE, "utf8");
     return JSON.parse(data);
 }
-
-/* Save Tasks */
 
 function saveTasks(tasks) {
     fs.writeFileSync(
@@ -25,22 +21,13 @@ function saveTasks(tasks) {
     );
 }
 
-/* Home */
-
 app.get("/", (req, res) => {
     res.send("Backend Running Successfully");
 });
 
-/* Get Tasks */
-
 app.get("/tasks", (req, res) => {
-
-    const tasks = getTasks();
-
-    res.json(tasks);
+    res.json(getTasks());
 });
-
-/* Add Task */
 
 app.post("/tasks", (req, res) => {
 
@@ -55,8 +42,6 @@ app.post("/tasks", (req, res) => {
     });
 });
 
-/* Update Task */
-
 app.put("/tasks/:id", (req, res) => {
 
     const tasks = getTasks();
@@ -69,8 +54,6 @@ app.put("/tasks/:id", (req, res) => {
         message: "Task Updated"
     });
 });
-
-/* Delete Task */
 
 app.delete("/tasks/:id", (req, res) => {
 
