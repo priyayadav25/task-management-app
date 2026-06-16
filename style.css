@@ -35,10 +35,25 @@ li{
     margin:10px 0;
 }
 
-.completed{
-    text-decoration:line-through;
-    color:green;
-    font-weight:bold;
+
+.completed {
+    text-decoration: line-through;
+    color: green;
+    font-weight: bold;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 30px;
+}
+
+button {
+    margin-left: 5px;
+    padding: 5px 10px;
+}
+
+li {
+    margin: 10px 0;
 }
 
 
