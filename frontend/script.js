@@ -9,6 +9,10 @@ async function loadTasks() {
         const taskList = document.getElementById("taskList");
         taskList.innerHTML = "";
 
+if(tasks.length === 0){
+    taskList.innerHTML = "<p>No tasks available</p>";
+    return;
+}
         tasks.forEach((task, index) => {
             const li = document.createElement("li");
 
