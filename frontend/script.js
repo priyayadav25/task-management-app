@@ -113,6 +113,9 @@ async function loadTasks(){
             <button onclick="markDone(${index})">
                 ${task.completed ? "Undo" : "Done"}
             </button>
+            <button onclick="editTask(${index})">
+    Edit
+</button>
 
             <button onclick="deleteTask(${index})">
                 Delete
