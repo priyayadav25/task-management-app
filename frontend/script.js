@@ -180,7 +180,38 @@ async function markDone(index){
 
     loadTasks();
 }
+async function editTask(index){
 
+    const response =
+        await fetch(API_URL);
+
+    const tasks =
+        await response.json();
+
+    const newTitle =
+        prompt(
+            "Edit Task",
+            tasks[index].title
+        );
+
+    if(!newTitle) return;
+
+    tasks[index].title =
+        newTitle;
+
+    await fetch(
+        `${API_URL}/${index}`,
+        {
+            method:"PUT",
+            headers:{
+                "Content-Type":"application/json"
+            },
+            body:JSON.stringify(tasks[index])
+        }
+    );
+
+    loadTasks();
+}
 /* DELETE TASK */
 
 async function deleteTask(index){
