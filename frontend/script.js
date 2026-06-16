@@ -1,7 +1,5 @@
 const API_URL = "http://localhost:5000/tasks";
 
-/* REGISTER */
-
 function registerUser() {
 
     const name =
@@ -18,23 +16,20 @@ function registerUser() {
         return;
     }
 
-    const user = {
-        name,
-        email,
-        password
-    };
-
     localStorage.setItem(
         "user",
-        JSON.stringify(user)
+        JSON.stringify({
+            name,
+            email,
+            password
+        })
     );
 
     alert("Registration Successful");
 
-    window.location.href = "login.html";
+    window.location.href =
+        "login.html";
 }
-
-/* LOGIN */
 
 function loginUser(){
 
@@ -52,28 +47,28 @@ function loginUser(){
         email === user.email &&
         password === user.password
     ){
-        localStorage.setItem("loggedIn","true");
+        localStorage.setItem(
+            "loggedIn",
+            "true"
+        );
 
-        alert("Login Successful");
-
-        window.location.href = "dashboard.html";
+        window.location.href =
+            "dashboard.html";
     }
     else{
         alert("Invalid Credentials");
     }
 }
 
-/* LOGOUT */
-
 function logout(){
-    localStorage.removeItem("loggedIn");
 
-    alert("Logged Out");
+    localStorage.removeItem(
+        "loggedIn"
+    );
 
-    window.location.href = "login.html";
+    window.location.href =
+        "login.html";
 }
-
-/* LOAD TASKS */
 
 async function loadTasks(){
 
@@ -83,22 +78,23 @@ async function loadTasks(){
     const tasks =
         await response.json();
 
-    const taskList =
-        document.getElementById("taskList");
+    document.getElementById(
+        "taskCount"
+    ).innerText = tasks.length;
 
-    if(document.getElementById("taskCount")){
+    document.getElementById(
+        "completedCount"
+    ).innerText =
+        tasks.filter(
+            t => t.completed
+        ).length;
+
+    const taskList =
         document.getElementById(
-            "taskCount"
-        ).innerText = tasks.length;
-    }
+            "taskList"
+        );
 
     taskList.innerHTML = "";
-
-    if(tasks.length === 0){
-        taskList.innerHTML =
-            "<p>No tasks available</p>";
-        return;
-    }
 
     tasks.forEach((task,index)=>{
 
@@ -106,16 +102,21 @@ async function loadTasks(){
             document.createElement("li");
 
         li.innerHTML = `
-            <span class="${task.completed ? "completed" : ""}">
+            <span class="${
+                task.completed
+                ? "completed"
+                : ""
+            }">
                 ${task.title}
             </span>
+
+            <button onclick="editTask(${index})">
+                Edit
+            </button>
 
             <button onclick="markDone(${index})">
                 ${task.completed ? "Undo" : "Done"}
             </button>
-            <button onclick="editTask(${index})">
-    Edit
-</button>
 
             <button onclick="deleteTask(${index})">
                 Delete
@@ -126,15 +127,15 @@ async function loadTasks(){
     });
 }
 
-/* ADD TASK */
-
 async function addTask(){
 
     const taskInput =
-        document.getElementById("taskInput");
+        document.getElementById(
+            "taskInput"
+        );
 
     if(taskInput.value.trim() === ""){
-        alert("Enter a task");
+        alert("Enter Task");
         return;
     }
 
@@ -154,32 +155,6 @@ async function addTask(){
     loadTasks();
 }
 
-/* COMPLETE TASK */
-
-async function markDone(index){
-
-    const response =
-        await fetch(API_URL);
-
-    const tasks =
-        await response.json();
-
-    tasks[index].completed =
-        !tasks[index].completed;
-
-    await fetch(
-        `${API_URL}/${index}`,
-        {
-            method:"PUT",
-            headers:{
-                "Content-Type":"application/json"
-            },
-            body:JSON.stringify(tasks[index])
-        }
-    );
-
-    loadTasks();
-}
 async function editTask(index){
 
     const response =
@@ -212,7 +187,31 @@ async function editTask(index){
 
     loadTasks();
 }
-/* DELETE TASK */
+
+async function markDone(index){
+
+    const response =
+        await fetch(API_URL);
+
+    const tasks =
+        await response.json();
+
+    tasks[index].completed =
+        !tasks[index].completed;
+
+    await fetch(
+        `${API_URL}/${index}`,
+        {
+            method:"PUT",
+            headers:{
+                "Content-Type":"application/json"
+            },
+            body:JSON.stringify(tasks[index])
+        }
+    );
+
+    loadTasks();
+}
 
 async function deleteTask(index){
 
