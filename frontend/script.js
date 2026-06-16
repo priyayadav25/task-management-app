@@ -4,6 +4,7 @@ async function loadTasks() {
     try {
         const response = await fetch(API_URL);
         const tasks = await response.json();
+        document.getElementById("taskCount").innerText = tasks.length;
 
         const taskList = document.getElementById("taskList");
         taskList.innerHTML = "";
