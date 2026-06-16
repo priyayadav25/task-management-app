@@ -1,98 +1,197 @@
 const API_URL = "http://localhost:5000/tasks";
 
-async function loadTasks() {
-    try {
-        const response = await fetch(API_URL);
-        const tasks = await response.json();
-        document.getElementById("taskCount").innerText = tasks.length;
+/* REGISTER */
 
-        const taskList = document.getElementById("taskList");
-        taskList.innerHTML = "";
+function registerUser() {
 
-if(tasks.length === 0){
-    taskList.innerHTML = "<p>No tasks available</p>";
-    return;
+    const name =
+        document.getElementById("name").value;
+
+    const email =
+        document.getElementById("email").value;
+
+    const password =
+        document.getElementById("password").value;
+
+    if(!name || !email || !password){
+        alert("Please fill all fields");
+        return;
+    }
+
+    const user = {
+        name,
+        email,
+        password
+    };
+
+    localStorage.setItem(
+        "user",
+        JSON.stringify(user)
+    );
+
+    alert("Registration Successful");
+
+    window.location.href = "login.html";
 }
-        tasks.forEach((task, index) => {
-            const li = document.createElement("li");
 
-            li.innerHTML = `
-                <span class="${task.completed ? 'completed' : ''}">
-                    ${task.title}
-                </span>
+/* LOGIN */
 
-                <button onclick="markDone(${index})">
-                    ${task.completed ? 'Undo' : 'Done'}
-                </button>
+function loginUser(){
 
-                <button onclick="deleteTask(${index})">
-                    Delete
-                </button>
-            `;
+    const email =
+        document.getElementById("loginEmail").value;
 
-            taskList.appendChild(li);
-        });
+    const password =
+        document.getElementById("loginPassword").value;
 
-    } catch (error) {
-        console.error("Error loading tasks:", error);
+    const user =
+        JSON.parse(localStorage.getItem("user"));
+
+    if(
+        user &&
+        email === user.email &&
+        password === user.password
+    ){
+        localStorage.setItem("loggedIn","true");
+
+        alert("Login Successful");
+
+        window.location.href = "dashboard.html";
+    }
+    else{
+        alert("Invalid Credentials");
     }
 }
 
-async function addTask() {
-    const taskInput = document.getElementById("taskInput");
+/* LOGOUT */
 
-    if (taskInput.value.trim() === "") {
+function logout(){
+    localStorage.removeItem("loggedIn");
+
+    alert("Logged Out");
+
+    window.location.href = "login.html";
+}
+
+/* LOAD TASKS */
+
+async function loadTasks(){
+
+    const response =
+        await fetch(API_URL);
+
+    const tasks =
+        await response.json();
+
+    const taskList =
+        document.getElementById("taskList");
+
+    if(document.getElementById("taskCount")){
+        document.getElementById(
+            "taskCount"
+        ).innerText = tasks.length;
+    }
+
+    taskList.innerHTML = "";
+
+    if(tasks.length === 0){
+        taskList.innerHTML =
+            "<p>No tasks available</p>";
+        return;
+    }
+
+    tasks.forEach((task,index)=>{
+
+        const li =
+            document.createElement("li");
+
+        li.innerHTML = `
+            <span class="${task.completed ? "completed" : ""}">
+                ${task.title}
+            </span>
+
+            <button onclick="markDone(${index})">
+                ${task.completed ? "Undo" : "Done"}
+            </button>
+
+            <button onclick="deleteTask(${index})">
+                Delete
+            </button>
+        `;
+
+        taskList.appendChild(li);
+    });
+}
+
+/* ADD TASK */
+
+async function addTask(){
+
+    const taskInput =
+        document.getElementById("taskInput");
+
+    if(taskInput.value.trim() === ""){
         alert("Enter a task");
         return;
     }
 
-    const newTask = {
-        title: taskInput.value,
-        completed: false
-    };
-
-    await fetch(API_URL, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
+    await fetch(API_URL,{
+        method:"POST",
+        headers:{
+            "Content-Type":"application/json"
         },
-        body: JSON.stringify(newTask)
+        body:JSON.stringify({
+            title:taskInput.value,
+            completed:false
+        })
     });
 
     taskInput.value = "";
-    loadTasks();
-}
-
-async function markDone(index) {
-
-    const response = await fetch(API_URL);
-    const tasks = await response.json();
-
-    tasks[index].completed = !tasks[index].completed;
-
-    await fetch(`${API_URL}/${index}`, {
-        method: "PUT",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(tasks[index])
-    });
 
     loadTasks();
 }
 
-async function deleteTask(index) {
+/* COMPLETE TASK */
 
-    await fetch(`${API_URL}/${index}`, {
-        method: "DELETE"
-    });
+async function markDone(index){
+
+    const response =
+        await fetch(API_URL);
+
+    const tasks =
+        await response.json();
+
+    tasks[index].completed =
+        !tasks[index].completed;
+
+    await fetch(
+        `${API_URL}/${index}`,
+        {
+            method:"PUT",
+            headers:{
+                "Content-Type":"application/json"
+            },
+            body:JSON.stringify(tasks[index])
+        }
+    );
 
     loadTasks();
 }
 
-function logout() {
-    alert("Logged Out Successfully");
-    window.location.href = "login.html";
+/* DELETE TASK */
+
+async function deleteTask(index){
+
+    await fetch(
+        `${API_URL}/${index}`,
+        {
+            method:"DELETE"
+        }
+    );
+
+    loadTasks();
 }
 
-loadTasks();
+if(document.getElementById("taskList")){
+    loadTasks();
+}
