@@ -1,83 +1,57 @@
-// REGISTER
+async function addTask() {
+    let task = document.getElementById("taskInput").value;
 
-function registerUser(){
+    if(task === ""){
+        alert("Enter Task");
+        return;
+    }
 
-let name=document.getElementById("name").value;
-let email=document.getElementById("email").value;
-let password=document.getElementById("password").value;
+    await fetch("http://localhost:5000/tasks", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            title: task,
+            completed: false
+        })
+    });
 
-localStorage.setItem(
-"user",
-JSON.stringify({
-name,
-email,
-password
-})
-);
+    document.getElementById("taskInput").value = "";
 
-alert("Registered Successfully");
-
-window.location.href="login.html";
+    loadTasks();
 }
 
-// LOGIN
+async function loadTasks() {
 
-function loginUser(){
+    const response = await fetch("http://localhost:5000/tasks");
+    const tasks = await response.json();
 
-let email=document.getElementById("loginEmail").value;
-let password=document.getElementById("loginPassword").value;
+    let taskList = document.getElementById("taskList");
+    taskList.innerHTML = "";
 
-let user=
-JSON.parse(localStorage.getItem("user"));
+    tasks.forEach((task, index) => {
 
-if(
-user &&
-user.email===email &&
-user.password===password
-){
-alert("Login Successful");
-window.location.href="dashboard.html";
-}
-else{
-alert("Invalid Credentials");
-}
-}
+        let li = document.createElement("li");
 
-// ADD TASK
+        li.innerHTML = `
+            ${task.title}
+            <button onclick="deleteTask(${index})">
+                Delete
+            </button>
+        `;
 
-async function addTask(){
-
-let task=
-document.getElementById("taskInput").value;
-
-if(task===""){
-alert("Enter Task");
-return;
+        taskList.appendChild(li);
+    });
 }
 
-await fetch(
-"http://localhost:5000/tasks",
-{
-method:"POST",
-headers:{
-"Content-Type":"application/json"
-},
-body:JSON.stringify({
-title:task,
-completed:false
-})
-}
-);
+async function deleteTask(index){
 
-alert("Task Added");
+    await fetch(`http://localhost:5000/tasks/${index}`,{
+        method:"DELETE"
+    });
 
-document.getElementById("taskInput").value="";
+    loadTasks();
 }
 
-// LOGOUT
-
-function logout(){
-
-window.location.href="login.html";
-
-}
+window.onload = loadTasks;
