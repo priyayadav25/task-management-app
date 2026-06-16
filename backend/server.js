@@ -25,7 +25,6 @@ app.post("/tasks", (req, res) => {
 });
 
 app.put("/tasks/:id", (req, res) => {
-
     tasks[req.params.id] = req.body;
 
     res.json({
@@ -34,7 +33,6 @@ app.put("/tasks/:id", (req, res) => {
 });
 
 app.delete("/tasks/:id", (req, res) => {
-
     tasks.splice(req.params.id, 1);
 
     res.json({
