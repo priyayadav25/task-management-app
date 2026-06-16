@@ -6,9 +6,15 @@
 </head>
 <body>
 
+<script>
+if(localStorage.getItem("loggedIn") !== "true"){
+    window.location.href = "login.html";
+}
+</script>
+
 <div class="container">
 
-    <h1>Task Dashboard</h1>
+    <h1>Task Management System</h1>
 
     <input
         type="text"
@@ -22,7 +28,12 @@
     <button onclick="logout()">
         Logout
     </button>
-    <p>Total Tasks: <span id="taskCount">0</span></p>
+
+    <p>
+        Total Tasks:
+        <span id="taskCount">0</span>
+    </p>
+
     <ul id="taskList"></ul>
 
 </div>
