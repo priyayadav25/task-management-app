@@ -1,7 +1,8 @@
 async function addTask() {
-    let task = document.getElementById("taskInput").value;
+    const taskInput = document.getElementById("taskInput");
+    const task = taskInput.value;
 
-    if(task === ""){
+    if (!task) {
         alert("Enter Task");
         return;
     }
@@ -17,41 +18,39 @@ async function addTask() {
         })
     });
 
-    document.getElementById("taskInput").value = "";
-
+    taskInput.value = "";
     loadTasks();
 }
 
 async function loadTasks() {
-
     const response = await fetch("http://localhost:5000/tasks");
     const tasks = await response.json();
 
-    let taskList = document.getElementById("taskList");
+    const taskList = document.getElementById("taskList");
     taskList.innerHTML = "";
 
     tasks.forEach((task, index) => {
-
-        let li = document.createElement("li");
+        const li = document.createElement("li");
 
         li.innerHTML = `
             ${task.title}
-            <button onclick="deleteTask(${index})">
-                Delete
-            </button>
+            <button onclick="deleteTask(${index})">Delete</button>
         `;
 
         taskList.appendChild(li);
     });
 }
 
-async function deleteTask(index){
-
-    await fetch(`http://localhost:5000/tasks/${index}`,{
-        method:"DELETE"
+async function deleteTask(index) {
+    await fetch(`http://localhost:5000/tasks/${index}`, {
+        method: "DELETE"
     });
 
     loadTasks();
+}
+
+function logout() {
+    window.location.href = "login.html";
 }
 
 window.onload = loadTasks;
