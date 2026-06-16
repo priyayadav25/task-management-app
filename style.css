@@ -32,29 +32,20 @@ button{
     cursor:pointer;
 }
 
-button:hover{
-    background:#0056b3;
-}
-
-li{
-    margin:10px 0;
-}
-
 .completed{
     color:green;
     font-weight:bold;
     text-decoration:line-through;
 }
 
-@media screen and (max-width:768px){
+@media(max-width:768px){
 
-    .container{
-        width:90%;
-        margin:auto;
-        margin-top:20px;
-    }
+.container{
+    width:95%;
+    margin:10px auto;
+}
 
-    button{
-        width:100%;
-    }
+button{
+    width:100%;
+}
 }
