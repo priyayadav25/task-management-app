@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Task Dashboard</title>
+    <title>Dashboard</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -14,7 +14,7 @@ if(localStorage.getItem("loggedIn") !== "true"){
 
 <div class="container">
 
-    <h1>Task Management System</h1>
+    <h1>Task Dashboard</h1>
 
     <input
         type="text"
@@ -32,6 +32,11 @@ if(localStorage.getItem("loggedIn") !== "true"){
     <p>
         Total Tasks:
         <span id="taskCount">0</span>
+    </p>
+
+    <p>
+        Completed Tasks:
+        <span id="completedCount">0</span>
     </p>
 
     <ul id="taskList"></ul>
